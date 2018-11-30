@@ -22,8 +22,14 @@ namespace TypeLite.TsModels {
         /// </summary>
         /// <param name="type">The CLR type represented by this instance of the TsType.</param>
         public TsType(Type type) {
-            if (type.IsNullable()) {
-                type = type.GetNullableValueType();
+            if (type.IsNullable())
+            {
+                //type = type.GetNullableValueType();
+            }
+
+            if (type == typeof(bool) || type == typeof(bool?))
+            {
+                
             }
 
             this.Type = type;

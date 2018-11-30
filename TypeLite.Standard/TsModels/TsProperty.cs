@@ -6,18 +6,24 @@ using System.Reflection;
 using System.Text;
 using TypeLite.Extensions;
 
-namespace TypeLite.TsModels {
+namespace TypeLite.TsModels
+{
     /// <summary>
     /// Represents a property of the class in the code model.
     /// </summary>
     [DebuggerDisplay("Name: {Name}")]
-    public class TsProperty {
-         public string Name { get; set; }
+    public class TsProperty
+    {
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets type of the property.
         /// </summary>
-        public TsType PropertyType { get; set; }
+        public TsType PropertyType
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets the CLR property represented by this TsProperty.
@@ -48,13 +54,15 @@ namespace TypeLite.TsModels {
         /// Initializes a new instance of the TsProperty class with the specific CLR property.
         /// </summary>
         /// <param name="memberInfo">The CLR property represented by this instance of the TsProperty.</param>
-        public TsProperty(PropertyInfo memberInfo) {
+        public TsProperty(PropertyInfo memberInfo)
+        {
             this.MemberInfo = memberInfo;
             this.Name = memberInfo.Name;
 
             var propertyType = memberInfo.PropertyType;
-            if (propertyType.IsNullable()) {
-                propertyType = propertyType.GetNullableValueType();
+            if (propertyType.IsNullable())
+            {
+                //propertyType = propertyType.GetNullableValueType();
             }
 
             this.GenericArguments = propertyType.IsGenericType ? propertyType.GetGenericArguments().Select(o => new TsType(o)).ToArray() : new TsType[0];
@@ -62,8 +70,10 @@ namespace TypeLite.TsModels {
             this.PropertyType = propertyType.IsEnum ? new TsEnum(propertyType) : new TsType(propertyType);
 
             var attribute = memberInfo.GetCustomAttribute<TsPropertyAttribute>(false);
-            if (attribute != null) {
-                if (!string.IsNullOrEmpty(attribute.Name)) {
+            if (attribute != null)
+            {
+                if (!string.IsNullOrEmpty(attribute.Name))
+                {
                     this.Name = attribute.Name;
                 }
 
@@ -80,21 +90,29 @@ namespace TypeLite.TsModels {
         /// Initializes a new instance of the TsProperty class with the specific CLR field.
         /// </summary>
         /// <param name="memberInfo">The CLR field represented by this instance of the TsProperty.</param>
-        public TsProperty(FieldInfo memberInfo) {
+        public TsProperty(FieldInfo memberInfo)
+        {
             this.MemberInfo = memberInfo;
             this.Name = memberInfo.Name;
 
-            if (memberInfo.ReflectedType.IsGenericType) {
+            if (memberInfo.ReflectedType.IsGenericType)
+            {
                 var definitionType = memberInfo.ReflectedType.GetGenericTypeDefinition();
                 var definitionTypeProperty = definitionType.GetProperty(memberInfo.Name);
-                if (definitionTypeProperty.PropertyType.IsGenericParameter) {
+                if (definitionTypeProperty.PropertyType.IsGenericParameter)
+                {
                     this.PropertyType = TsType.Any;
-                } else {
+                }
+                else
+                {
                     this.PropertyType = memberInfo.FieldType.IsEnum ? new TsEnum(memberInfo.FieldType) : new TsType(memberInfo.FieldType);
                 }
-            } else {
+            }
+            else
+            {
                 var propertyType = memberInfo.FieldType;
-                if (propertyType.IsNullable()) {
+                if (propertyType.IsNullable())
+                {
                     propertyType = propertyType.GetNullableValueType();
                 }
 
@@ -102,8 +120,10 @@ namespace TypeLite.TsModels {
             }
 
             var attribute = memberInfo.GetCustomAttribute<TsPropertyAttribute>(false);
-            if (attribute != null) {
-                if (!string.IsNullOrEmpty(attribute.Name)) {
+            if (attribute != null)
+            {
+                if (!string.IsNullOrEmpty(attribute.Name))
+                {
                     this.Name = attribute.Name;
                 }
 
@@ -112,10 +132,13 @@ namespace TypeLite.TsModels {
 
             this.IsIgnored = (memberInfo.GetCustomAttribute<TsIgnoreAttribute>(false) != null);
 
-            if (memberInfo.IsLiteral && !memberInfo.IsInitOnly) {
+            if (memberInfo.IsLiteral && !memberInfo.IsInitOnly)
+            {
                 // it's a constant
                 this.ConstantValue = memberInfo.GetValue(null);
-            } else {
+            }
+            else
+            {
                 // not a constant
                 this.ConstantValue = null;
             }

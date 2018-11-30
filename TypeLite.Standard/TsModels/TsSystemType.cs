@@ -21,7 +21,12 @@ namespace TypeLite.TsModels {
 		public TsSystemType(Type type)
 			: base(type) {
 
-			switch (this.Type.Name) {
+		    if (type.IsNullable())
+		    {
+		        type = type.GetNullableValueType();
+		    }
+
+			switch (type.Name) {
 				case "Boolean": this.Kind = SystemTypeKind.Bool; break;
 				case "String":
 				case "Char":
